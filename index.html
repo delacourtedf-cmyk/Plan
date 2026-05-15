@@ -2411,6 +2411,24 @@ function startGame() {
   updateHUD();
   updateComboDisplay();
 
+  // ── Prime video element for Safari iPad ──
+  // Safari requires a user-gesture-initiated play() to unlock <video>.
+  // We do a tiny silent play here (inside the click handler chain) so
+  // subsequent programmatic play() calls in loadClip work.
+  const vid = document.getElementById('game-vid');
+  vid.muted = true;
+  vid.playsInline = true;
+  vid.setAttribute('playsinline', '');
+  vid.setAttribute('webkit-playsinline', '');
+  // Load first clip source now if available, so the play() primes it
+  const firstUrl = G.clips.length ? getVideoUrl(G.clips[0].file) : null;
+  if (firstUrl) {
+    vid.src = firstUrl;
+    vid.load();
+    const primePlay = vid.play();
+    if (primePlay) primePlay.then(() => { vid.pause(); vid.currentTime = 0; }).catch(() => {});
+  }
+
   showScreen('s-game');
   showCountdown(() => loadClip());
 }
@@ -2534,9 +2552,13 @@ function loadClip() {
     vid._timeupdateHandler = onTimeUpdate;
 
     // Wait for video to be ready before playing
+    let startPlaybackCalled = false;
     const startPlayback = () => {
+      if (startPlaybackCalled) return;
+      startPlaybackCalled = true;
       vid.removeEventListener('loadeddata', startPlayback);
       vid.removeEventListener('canplay', startPlayback);
+      vid.removeEventListener('playing', startPlayback);
       vid.currentTime = 0;
       const playPromise = vid.play();
       if (playPromise) {
@@ -2563,8 +2585,16 @@ function loadClip() {
     } else {
       vid.addEventListener('loadeddata', startPlayback);
       vid.addEventListener('canplay', startPlayback);
+      vid.addEventListener('playing', startPlayback);
       vid.src = videoUrl;
       vid.load(); // Force load for blob URLs
+      // Safari iPad fallback: if no event fires within 2s, try to play anyway
+      setTimeout(() => {
+        if (!startPlaybackCalled) {
+          console.warn('No loadeddata/canplay event — forcing play');
+          startPlayback();
+        }
+      }, 2000);
     }
 
     // Fallback timeouts (in case timeupdate events don't fire)
@@ -2641,6 +2671,9 @@ function getVideoUrl(filename) {
   // Check in-memory video blobs (from folder import in current session)
   if (G.pack._videoBlobs?.[filename]) return G.pack._videoBlobs[filename];
   if (window._videoPacks?.[G.pack.team]?.[filename]) return window._videoPacks[G.pack.team][filename];
+  
+  // Check ZIP-extracted blob URLs (created immediately during ZIP extraction)
+  if (window._zipBlobUrls?.[filename]) return window._zipBlobUrls[filename];
 
   // Check if pack has a base URL (for server-hosted videos)
   if (G.pack.baseUrl) return G.pack.baseUrl + '/' + filename;
@@ -3721,14 +3754,21 @@ async function handleZipUpload(zipFile) {
     let extracted = 0;
     
     // Extract all .mp4 files — preserve full ZIP path for folder detection
+    // Create blob URLs IMMEDIATELY to prevent garbage collection on iPad/Safari
+    if (!window._videoPacks) window._videoPacks = {};
+    if (!window._zipBlobUrls) window._zipBlobUrls = {};
+    
     for (const [path, file] of mp4Entries) {
       extracted++;
       document.getElementById('zip-progress').textContent = `Extraction ${extracted}/${mp4Entries.length} vidéos...`;
       
       const blob = await file.async('blob');
-      // Use the full ZIP path as the file name so handleFolderSelect can detect
-      // folder structure (freeze/live/continu) from the path
-      const videoFile = new File([blob], path.split('/').pop(), { type: 'video/mp4' });
+      const blobWithType = new Blob([blob], { type: 'video/mp4' });
+      const videoFile = new File([blobWithType], path.split('/').pop(), { type: 'video/mp4' });
+      
+      // Create blob URL immediately and store it globally (prevents GC on iPad)
+      const blobUrl = URL.createObjectURL(blobWithType);
+      window._zipBlobUrls[videoFile.name] = blobUrl;
       
       // Monkey-patch webkitRelativePath since File constructor doesn't allow setting it
       Object.defineProperty(videoFile, 'webkitRelativePath', {
