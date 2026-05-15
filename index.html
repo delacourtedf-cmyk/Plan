@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SetterIQ">
+<meta name="theme-color" content="#04060d">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
 <title>SetterIQ — Reconnaissance Passeur</title>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -1401,6 +1406,20 @@ body {
 .dropzone-text { font-family: var(--display); font-size: 14px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
 .dropzone-sub { font-family: var(--mono); font-size: 10px; color: var(--text-dim); margin-top: 4px; }
 
+/* Spinner for ZIP loading */
+.spinner {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto;
+  border: 3px solid rgba(255,255,255,.1);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 /* Scan results */
 .scan-summary { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
 .scan-badge { background: var(--bg2); border: 1px solid var(--border); padding: 6px 10px; font-family: var(--mono); font-size: 11px; font-weight: 600; }
@@ -1441,6 +1460,91 @@ body {
 }
 .adm-btn-sm:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
 .adm-btn-sm.danger:hover { border-color: var(--incorrect); color: var(--incorrect); background: var(--incorrect-dim); }
+
+/* ════════════════════════════════════════════════════════
+   NOTICE
+   ════════════════════════════════════════════════════════ */
+#s-notice { padding: 36px 24px 48px; gap: 16px; align-items: center; overflow-y: auto; }
+.notice-steps { display: flex; flex-direction: column; gap: 10px; }
+.notice-step {
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.notice-step-num {
+  flex-shrink: 0;
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--accent-dim);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-family: var(--display);
+  font-size: 13px; font-weight: 800;
+  clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 100%, 4px 100%);
+}
+.notice-step-content { flex: 1; }
+.notice-step-title {
+  font-family: var(--display);
+  font-size: 13px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+.notice-step-text {
+  font-family: var(--body);
+  font-size: 12px; line-height: 1.6;
+  color: var(--text-muted);
+}
+.notice-code {
+  font-family: var(--mono);
+  font-size: 11px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid var(--border);
+  padding: 1px 6px;
+  color: var(--cyan);
+  letter-spacing: .5px;
+}
+.notice-subtitle {
+  font-family: var(--display);
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+  padding-left: 2px;
+}
+.notice-naming { padding: 8px 0; }
+.notice-naming-format { margin-bottom: 12px; padding: 10px 0; text-align: center; }
+.notice-naming-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.notice-naming-item {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  display: flex; align-items: center; gap: 8px;
+}
+.notice-naming-label {
+  font-family: var(--display);
+  font-size: 12px; font-weight: 800;
+  color: var(--gold);
+  background: rgba(255,200,61,.08);
+  border: 1px solid rgba(255,200,61,.2);
+  padding: 2px 8px;
+  letter-spacing: 1px;
+}
+.notice-tree {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  padding: 14px 16px;
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 2;
+  color: var(--text-muted);
+}
+.notice-tree-folder { margin-right: 4px; }
+.notice-tree-indent1 { padding-left: 20px; }
+.notice-tree-indent2 { padding-left: 44px; color: var(--text-dim); }
+.notice-tree-dots { color: var(--text-dim); opacity: .5; }
+.notice-tree-count { color: var(--text-dim); font-size: 10px; margin-left: 6px; }
 
 /* ════════════════════════════════════════════════════════
    IN-GAME ANIMATIONS
@@ -1575,6 +1679,7 @@ body {
     <div class="btn-row anim-in" style="animation-delay:.3s">
       <button class="btn-secondary" onclick="showScreen('s-leaderboard');loadLeaderboard()">🏆 Classement</button>
       <button class="btn-secondary" onclick="showScreen('s-admin');loadAdmin()">⚙ Admin staff</button>
+      <button class="btn-secondary" onclick="showScreen('s-notice')">📖 Notice</button>
     </div>
   </div>
 </section>
@@ -1862,11 +1967,31 @@ body {
             <div class="import-info-legend" style="margin-top:4px">Réponses valides : dix, left, mid, pipe, right</div>
           </div>
 
-          <div class="import-dropzone" id="import-dropzone" onclick="document.getElementById('folder-input').click()">
-            <div class="dropzone-icon"><i class="ti ti-folder-open" style="font-size:32px" aria-hidden="true"></i></div>
-            <div class="dropzone-text">Sélectionner le dossier du pack</div>
-            <div class="dropzone-sub">ou glisser-déposer les fichiers .mp4 ici</div>
-            <input type="file" id="folder-input" webkitdirectory multiple accept="video/mp4,.mp4" style="display:none" onchange="handleFolderSelect(this.files)">
+          <!-- PRIMARY: ZIP import (works everywhere including iPad) -->
+          <div class="import-dropzone" id="import-dropzone-zip" onclick="document.getElementById('zip-input').click()" style="margin-bottom:12px; border-color:var(--accent)">
+            <div class="dropzone-icon"><i class="ti ti-file-zip" style="font-size:32px" aria-hidden="true"></i></div>
+            <div class="dropzone-text" style="color:var(--accent)">Importer le ZIP du pack</div>
+            <div class="dropzone-sub">Recommandé sur iPad — Zippez votre dossier complet (sous-dossiers inclus)</div>
+            <input type="file" id="zip-input" accept=".zip,application/zip" style="display:none" onchange="handleZipUpload(this.files[0])">
+          </div>
+
+          <!-- SECONDARY: Folder select (desktop only) -->
+          <div id="desktop-folder-section">
+            <div style="text-align:center; margin-bottom:8px; font-family:var(--mono); font-size:10px; color:var(--text-dim); letter-spacing:1px; text-transform:uppercase">— ou sur ordinateur —</div>
+            <div class="import-dropzone" id="import-dropzone" onclick="document.getElementById('folder-input').click()">
+              <div class="dropzone-icon"><i class="ti ti-folder-open" style="font-size:32px" aria-hidden="true"></i></div>
+              <div class="dropzone-text">Sélectionner un dossier</div>
+              <div class="dropzone-sub">Chargez Freeze, Live, Continu un par un — les imports s'accumulent</div>
+              <input type="file" id="folder-input" directory webkitdirectory mozdirectory multiple accept="video/mp4,.mp4" style="display:none" onchange="handleFolderSelect(this.files)">
+            </div>
+          
+            <!-- Alternative: multi-file selector -->
+            <div style="text-align:center; margin-top:12px">
+              <button class="btn-secondary" onclick="document.getElementById('multi-file-input').click()" style="font-size:11px; padding:6px 12px">
+                Sélectionner plusieurs fichiers
+              </button>
+              <input type="file" id="multi-file-input" multiple accept="video/mp4,.mp4" style="display:none" onchange="handleFolderSelect(this.files)">
+            </div>
           </div>
 
           <!-- Scan results -->
@@ -1897,6 +2022,178 @@ body {
     </div>
 
     <div class="btn-row anim-in" style="animation-delay:.16s">
+      <button class="btn-secondary" onclick="goHome()">← Accueil</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ NOTICE / GUIDE ══════════ -->
+<section id="s-notice" class="screen">
+  <div class="admin-wrap">
+    <div class="admin-header anim-in">
+      <div class="lb-title">📖 Notice d'utilisation</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-top:4px">Installation &amp; chargement des vidéos</div>
+    </div>
+
+    <!-- SECTION 1: Héberger sur GitHub -->
+    <div class="card anim-in" style="animation-delay:.08s">
+      <div class="card-title" style="color:var(--accent)">1 — Héberger sur GitHub Pages</div>
+      <div class="notice-steps">
+        <div class="notice-step">
+          <div class="notice-step-num">1</div>
+          <div class="notice-step-content">
+            <div class="notice-step-title">Créer un compte GitHub</div>
+            <div class="notice-step-text">Rendez-vous sur <span class="notice-code">github.com</span> et créez un compte gratuit (si ce n'est pas déjà fait).</div>
+          </div>
+        </div>
+        <div class="notice-step">
+          <div class="notice-step-num">2</div>
+          <div class="notice-step-content">
+            <div class="notice-step-title">Créer un nouveau dépôt</div>
+            <div class="notice-step-text">Cliquez sur le <span class="notice-code">+</span> en haut à droite → <span class="notice-code">New repository</span>. Nom : par exemple <span class="notice-code">setteriq</span>. Cochez <span class="notice-code">Public</span> et <span class="notice-code">Add a README file</span>, puis cliquez <span class="notice-code">Create repository</span>.</div>
+          </div>
+        </div>
+        <div class="notice-step">
+          <div class="notice-step-num">3</div>
+          <div class="notice-step-content">
+            <div class="notice-step-title">Déposer le fichier HTML</div>
+            <div class="notice-step-text">Dans le dépôt, cliquez <span class="notice-code">Add file → Upload files</span>. Renommez le fichier en <span class="notice-code">index.html</span> <strong>avant</strong> de le glisser, puis cliquez <span class="notice-code">Commit changes</span>.</div>
+          </div>
+        </div>
+        <div class="notice-step">
+          <div class="notice-step-num">4</div>
+          <div class="notice-step-content">
+            <div class="notice-step-title">Activer GitHub Pages</div>
+            <div class="notice-step-text">Allez dans <span class="notice-code">Settings → Pages</span>. Sous "Source", choisissez <span class="notice-code">Deploy from a branch</span>, branch <span class="notice-code">main</span>, dossier <span class="notice-code">/ (root)</span> puis <span class="notice-code">Save</span>.</div>
+          </div>
+        </div>
+        <div class="notice-step">
+          <div class="notice-step-num">5</div>
+          <div class="notice-step-content">
+            <div class="notice-step-title">Récupérer l'adresse</div>
+            <div class="notice-step-text">Après 1-2 min, votre site est en ligne à : <span class="notice-code">https://VOTRE-PSEUDO.github.io/setteriq/</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: Installer sur iPad -->
+    <div class="card anim-in" style="animation-delay:.12s">
+      <div class="card-title" style="color:var(--cyan)">2 — Installer sur iPad</div>
+      <div class="notice-steps">
+        <div class="notice-step">
+          <div class="notice-step-num">1</div>
+          <div class="notice-step-content">
+            <div class="notice-step-title">Ouvrir dans Safari</div>
+            <div class="notice-step-text">Sur l'iPad, ouvrez <span class="notice-code">Safari</span> et entrez l'adresse de votre site GitHub Pages.</div>
+          </div>
+        </div>
+        <div class="notice-step">
+          <div class="notice-step-num">2</div>
+          <div class="notice-step-content">
+            <div class="notice-step-title">Ajouter à l'écran d'accueil</div>
+            <div class="notice-step-text">Tapez l'icône de partage <span class="notice-code">↑</span> → <span class="notice-code">Sur l'écran d'accueil</span>. L'app se lancera en plein écran avec l'icône SetterIQ.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: Charger les vidéos -->
+    <div class="card anim-in" style="animation-delay:.16s">
+      <div class="card-title" style="color:var(--correct)">3 — Charger les vidéos</div>
+      
+      <div class="notice-subtitle">Méthode A — ZIP (recommandé sur iPad)</div>
+      <div class="notice-steps">
+        <div class="notice-step">
+          <div class="notice-step-num">1</div>
+          <div class="notice-step-content">
+            <div class="notice-step-title">Créer le ZIP sur PC</div>
+            <div class="notice-step-text">Sur Windows, clic droit sur votre dossier principal (contenant les sous-dossiers Freeze, Live, Continu) → <span class="notice-code">Envoyer vers → Dossier compressé</span>.</div>
+          </div>
+        </div>
+        <div class="notice-step">
+          <div class="notice-step-num">2</div>
+          <div class="notice-step-content">
+            <div class="notice-step-title">Transférer sur iPad</div>
+            <div class="notice-step-text">Copiez le .zip sur <span class="notice-code">iCloud Drive</span>, <span class="notice-code">Google Drive</span>, ou via une <span class="notice-code">clé USB</span> + adaptateur.</div>
+          </div>
+        </div>
+        <div class="notice-step">
+          <div class="notice-step-num">3</div>
+          <div class="notice-step-content">
+            <div class="notice-step-title">Importer dans SetterIQ</div>
+            <div class="notice-step-text">Dans <span class="notice-code">Admin Staff → Créer un pack</span>, cliquez <span class="notice-code">Importer le ZIP du pack</span>. Les sous-dossiers sont détectés automatiquement.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="notice-subtitle" style="margin-top:18px">Méthode B — Dossier par dossier (sur ordinateur)</div>
+      <div class="notice-steps">
+        <div class="notice-step">
+          <div class="notice-step-num">1</div>
+          <div class="notice-step-content">
+            <div class="notice-step-title">Charger Freeze</div>
+            <div class="notice-step-text">Cliquez <span class="notice-code">Sélectionner un dossier</span> → choisissez le dossier <span class="notice-code">Freeze</span>.</div>
+          </div>
+        </div>
+        <div class="notice-step">
+          <div class="notice-step-num">2</div>
+          <div class="notice-step-content">
+            <div class="notice-step-title">Charger Live puis Continu</div>
+            <div class="notice-step-text">Recliquez sur le même bouton → choisissez <span class="notice-code">Live</span>, puis recommencez pour <span class="notice-code">Continu</span>. Les imports s'accumulent automatiquement.</div>
+          </div>
+        </div>
+        <div class="notice-step">
+          <div class="notice-step-num">3</div>
+          <div class="notice-step-content">
+            <div class="notice-step-title">Vérifier et sauvegarder</div>
+            <div class="notice-step-text">Vérifiez que le compteur affiche <span class="notice-code">170/170</span> (60 Freeze + 60 Live + 50 Continu), puis cliquez <span class="notice-code">Enregistrer le pack</span>.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 4: Convention de nommage -->
+    <div class="card anim-in" style="animation-delay:.2s">
+      <div class="card-title" style="color:var(--gold)">4 — Convention de nommage des fichiers</div>
+      <div class="notice-naming">
+        <div class="notice-naming-format">
+          <span class="notice-code" style="font-size:15px">R1_01_pipe_3200.mp4</span>
+        </div>
+        <div class="notice-naming-grid">
+          <div class="notice-naming-item"><span class="notice-naming-label">R1</span> Rotation (R1 à R6)</div>
+          <div class="notice-naming-item"><span class="notice-naming-label">01</span> Numéro du clip</div>
+          <div class="notice-naming-item"><span class="notice-naming-label">pipe</span> Réponse attendue</div>
+          <div class="notice-naming-item"><span class="notice-naming-label">3200</span> Contact en ms</div>
+        </div>
+        <div style="margin-top:10px; font-family:var(--mono); font-size:10px; color:var(--text-dim)">
+          Réponses valides : <span class="notice-code">dix</span> · <span class="notice-code">left</span> · <span class="notice-code">mid</span> · <span class="notice-code">pipe</span> · <span class="notice-code">right</span>
+        </div>
+        <div style="margin-top:6px; font-family:var(--mono); font-size:10px; color:var(--text-dim)">
+          Continu (sans rotation) : <span class="notice-code">001_pipe_2800.mp4</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 5: Structure des dossiers -->
+    <div class="card anim-in" style="animation-delay:.24s">
+      <div class="card-title" style="color:var(--adjacent)">5 — Structure des dossiers</div>
+      <div class="notice-tree">
+        <div class="notice-tree-line"><span class="notice-tree-folder">📁</span> MonPack/</div>
+        <div class="notice-tree-line notice-tree-indent1"><span class="notice-tree-folder">📁</span> Freeze/ <span class="notice-tree-count">60 vidéos (10 × 6 rotations)</span></div>
+        <div class="notice-tree-line notice-tree-indent2">R1_01_pipe_3200.mp4</div>
+        <div class="notice-tree-line notice-tree-indent2">R1_02_left_2900.mp4</div>
+        <div class="notice-tree-line notice-tree-indent2 notice-tree-dots">…</div>
+        <div class="notice-tree-line notice-tree-indent1"><span class="notice-tree-folder">📁</span> Live/ <span class="notice-tree-count">60 vidéos (10 × 6 rotations)</span></div>
+        <div class="notice-tree-line notice-tree-indent2">R1_01_mid_3100.mp4</div>
+        <div class="notice-tree-line notice-tree-indent2 notice-tree-dots">…</div>
+        <div class="notice-tree-line notice-tree-indent1"><span class="notice-tree-folder">📁</span> Continu/ <span class="notice-tree-count">50 vidéos (sans rotation)</span></div>
+        <div class="notice-tree-line notice-tree-indent2">001_pipe_2800.mp4</div>
+        <div class="notice-tree-line notice-tree-indent2 notice-tree-dots">…</div>
+      </div>
+    </div>
+
+    <div class="btn-row anim-in" style="animation-delay:.28s">
       <button class="btn-secondary" onclick="goHome()">← Accueil</button>
     </div>
   </div>
@@ -3390,6 +3687,84 @@ function setupDropzone() {
   });
 }
 
+/* ── ZIP file handler ── */
+async function handleZipUpload(zipFile) {
+  if (!zipFile) return;
+  
+  // Show loading
+  const dropzone = document.getElementById('import-dropzone-zip');
+  const originalHTML = dropzone.innerHTML;
+  dropzone.innerHTML = '<div style="padding:40px; text-align:center"><div class="spinner"></div><div style="margin-top:12px" id="zip-progress">Chargement de la bibliothèque...</div></div>';
+  
+  try {
+    // Load JSZip library dynamically
+    if (typeof JSZip === 'undefined') {
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+      await new Promise((resolve, reject) => {
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
+    
+    document.getElementById('zip-progress').textContent = 'Extraction du ZIP...';
+    
+    const zip = new JSZip();
+    const contents = await zip.loadAsync(zipFile);
+    const videoFiles = [];
+    
+    // Count total mp4 files first
+    const mp4Entries = Object.entries(contents.files).filter(([path, file]) => 
+      !file.dir && path.toLowerCase().endsWith('.mp4')
+    );
+    let extracted = 0;
+    
+    // Extract all .mp4 files — preserve full ZIP path for folder detection
+    for (const [path, file] of mp4Entries) {
+      extracted++;
+      document.getElementById('zip-progress').textContent = `Extraction ${extracted}/${mp4Entries.length} vidéos...`;
+      
+      const blob = await file.async('blob');
+      // Use the full ZIP path as the file name so handleFolderSelect can detect
+      // folder structure (freeze/live/continu) from the path
+      const videoFile = new File([blob], path.split('/').pop(), { type: 'video/mp4' });
+      
+      // Monkey-patch webkitRelativePath since File constructor doesn't allow setting it
+      Object.defineProperty(videoFile, 'webkitRelativePath', {
+        value: path,
+        writable: false
+      });
+      
+      videoFiles.push(videoFile);
+    }
+    
+    if (videoFiles.length === 0) {
+      alert('Aucun fichier .mp4 trouvé dans le ZIP');
+      dropzone.innerHTML = originalHTML;
+      return;
+    }
+    
+    document.getElementById('zip-progress').textContent = 'Classification des vidéos...';
+    
+    // Process extracted videos
+    handleFolderSelect(videoFiles);
+    
+    // Mark ZIP dropzone as success
+    dropzone.classList.add('has-files');
+    dropzone.innerHTML = `<div style="padding:16px; text-align:center">
+      <div style="font-size:28px; margin-bottom:6px">✅</div>
+      <div class="dropzone-text" style="color:var(--correct)">${videoFiles.length} vidéos extraites du ZIP</div>
+      <div class="dropzone-sub" style="margin-top:4px">Cliquez pour charger un autre ZIP</div>
+    </div>`;
+    
+  } catch (err) {
+    console.error('ZIP extraction error:', err);
+    alert('Erreur lors de l\'extraction du ZIP: ' + err.message);
+    dropzone.innerHTML = originalHTML;
+  }
+}
+
 /* ══════════════════════════════════════════════════
    FILE PARSER — Convention: R1_01_pipe_3200.mp4
    Also handles continu: 001_pipe_2800.mp4
@@ -3448,14 +3823,18 @@ function handleFolderSelect(fileList) {
   const files = Array.from(fileList).filter(f => f.name.toLowerCase().endsWith('.mp4'));
   if (!files.length) { alert('Aucun fichier .mp4 trouvé'); return; }
 
-  importState.files = files;
+  // ACCUMULATE: merge new files with existing ones (avoid duplicates by filename)
+  const existingNames = new Set((importState.files || []).map(f => f.name.toLowerCase()));
+  const newFiles = files.filter(f => !existingNames.has(f.name.toLowerCase()));
+  importState.files = [...(importState.files || []), ...newFiles];
 
-  // Parse all filenames
+  // Re-parse ALL accumulated files from scratch
+  const allFiles = importState.files;
   const parsed = { freeze: {}, live: {}, continu: [], errors: [], total: 0 };
   ROTATION_ORDER.forEach(r => { parsed.freeze[r] = []; parsed.live[r] = []; });
 
   // Classify by folder path
-  files.forEach(f => {
+  allFiles.forEach(f => {
     const info = parseVideoFilename(f.name);
     if (!info) {
       parsed.errors.push(f.name);
@@ -3814,6 +4193,17 @@ function checkPerfectRotation() {
 // Init on load
 loadHomePacks();
 
+// Hide desktop-only folder section on iPad/tablet/mobile
+(function detectTablet() {
+  const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  const isIpad = /iPad|Macintosh/i.test(navigator.userAgent) && isTouch;
+  const isMobile = /iPhone|Android|Mobile/i.test(navigator.userAgent);
+  if (isIpad || isMobile) {
+    const el = document.getElementById('desktop-folder-section');
+    if (el) el.style.display = 'none';
+  }
+})();
+
 /* ══════════════════════════════════════════════════
    PREVIEW HELPER — purely additive. Triggered only via
    #screen=xxx hash. Used for the design canvas showcase
@@ -3963,6 +4353,105 @@ document.addEventListener('keydown', e => {
   const map = { Digit1:'dix', ArrowLeft:'left', ArrowUp:'mid', ArrowDown:'pipe', ArrowRight:'right' };
   if (map[e.code] || map[e.key]) { e.preventDefault(); handleAnswer(map[e.code] || map[e.key]); }
 });
+
+/* ══════════════════════════════════════════════════
+   PWA — Manifest + Service Worker + Icon generation
+   Everything inline so a single HTML file works as a full app on iPad
+══════════════════════════════════════════════════ */
+(function setupPWA() {
+  // ── Generate app icon as data URL via canvas ──
+  function generateIcon(size) {
+    const c = document.createElement('canvas');
+    c.width = size; c.height = size;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#04060d';
+    ctx.fillRect(0, 0, size, size);
+    // Accent bar left
+    ctx.fillStyle = '#ff2c4d';
+    ctx.fillRect(0, 0, size * 0.06, size);
+    // Subtle glow
+    const grd = ctx.createRadialGradient(size*0.5, size*0.3, 0, size*0.5, size*0.5, size*0.7);
+    grd.addColorStop(0, 'rgba(255,44,77,0.15)');
+    grd.addColorStop(1, 'transparent');
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, size, size);
+    // "S" large
+    ctx.fillStyle = '#ffffff';
+    ctx.font = `bold ${size * 0.55}px "Helvetica Neue", Arial, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('S', size * 0.52, size * 0.44);
+    // "IQ" accent
+    ctx.fillStyle = '#ff2c4d';
+    ctx.font = `bold ${size * 0.2}px "Helvetica Neue", Arial, sans-serif`;
+    ctx.fillText('IQ', size * 0.52, size * 0.76);
+    return c.toDataURL('image/png');
+  }
+
+  const icon192 = generateIcon(192);
+  const icon512 = generateIcon(512);
+
+  // ── Apple touch icon ──
+  const touchIcon = document.querySelector('link[rel="apple-touch-icon"]');
+  if (touchIcon) touchIcon.href = icon192;
+
+  // ── Inline manifest ──
+  const manifest = {
+    name: 'SetterIQ — Reconnaissance Passeur',
+    short_name: 'SetterIQ',
+    description: 'Entraînement gamifié à la lecture du passeur en volley-ball',
+    start_url: './',
+    display: 'standalone',
+    orientation: 'landscape',
+    background_color: '#04060d',
+    theme_color: '#04060d',
+    icons: [
+      { src: icon192, sizes: '192x192', type: 'image/png' },
+      { src: icon512, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+    ]
+  };
+  const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+  const manifestLink = document.querySelector('link[rel="manifest"]');
+  if (manifestLink) manifestLink.href = URL.createObjectURL(manifestBlob);
+
+  // ── Service Worker for offline cache ──
+  if ('serviceWorker' in navigator) {
+    const swCode = `
+      const CACHE_NAME = 'setteriq-v1';
+      self.addEventListener('install', e => {
+        e.waitUntil(
+          caches.open(CACHE_NAME)
+            .then(cache => cache.addAll(['./']))
+            .then(() => self.skipWaiting())
+        );
+      });
+      self.addEventListener('activate', e => {
+        e.waitUntil(
+          caches.keys().then(keys =>
+            Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+          ).then(() => self.clients.claim())
+        );
+      });
+      self.addEventListener('fetch', e => {
+        if (e.request.method !== 'GET') return;
+        e.respondWith(
+          caches.match(e.request).then(cached => {
+            const fetched = fetch(e.request).then(response => {
+              if (response.ok) {
+                const clone = response.clone();
+                caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
+              }
+              return response;
+            }).catch(() => cached);
+            return cached || fetched;
+          })
+        );
+      });
+    `;
+    const swBlob = new Blob([swCode], { type: 'application/javascript' });
+    navigator.serviceWorker.register(URL.createObjectURL(swBlob), { scope: './' }).catch(() => {});
+  }
+})();
 </script>
 </body>
 </html>
